@@ -3,13 +3,13 @@ from os import environ
 
 class Config:
     # Bot Configuration
-    API_ID = int(environ.get("API_ID", "12345678"))
-    API_HASH = environ.get("API_HASH", "your_api_hash_here")
-    BOT_TOKEN = environ.get("BOT_TOKEN", "your_bot_token_here")
+    API_ID = "20288994"
+    API_HASH = "d702614912f1ad370a0d18786002adbf"
+    BOT_TOKEN = "7958640544:AAGQSUlrLk8WL7aqfBSusVsMvP-E7LwlZ5w"
     
     # Database Configuration
-    DATABASE_URI = environ.get("DATABASE_URI", "mongodb+srv://username:password@cluster.mongodb.net/")
-    DATABASE_NAME = environ.get("DATABASE_NAME", "telegram_bot")
+    DATABASE_URI = "mongodb+srv://Zerobothost:zero8907@cluster0.szwdcyb.mongodb.net/?appName=Cluster0"
+    DATABASE_NAME = "telegram_bot"
     
     # Force Subscribe Channels
     FORCE_SUB_CHANNELS = [
@@ -18,22 +18,21 @@ class Config:
     ]
     
     # Owner/Developer
-    OWNER_ID = int(environ.get("OWNER_ID", "1234567890"))
-    OWNER_USERNAME = environ.get("OWNER_USERNAME", "@Venuboyy")
+    OWNER_ID = "8498741978"
+    OWNER_USERNAME = "@Venuboyy"
     
     # Welcome Images
-    WELCOME_IMAGE = environ.get("WELCOME_IMAGE", "https://i.ibb.co/pr2H8cwT/img-8312532076.jpg")
-    RANDOM_IMAGE_API = environ.get("RANDOM_IMAGE_API", "https://api.aniwallpaper.workers.dev/random?type=girl")
+    WELCOME_IMAGE = "https://i.ibb.co/pr2H8cwT/img-8312532076.jpg"
+    RANDOM_IMAGE_API = "https://api.aniwallpaper.workers.dev/random?type=girl"
     
     # Welcome Sticker
-    WELCOME_STICKER = environ.get("WELCOME_STICKER", "CAACAgIAAxkBAAEQZtFpgEdROhGouBVFD3e0K-YjmVHwsgACtCMAAphLKUjeub7NKlvk2TgE")
+    WELCOME_STICKER = "CAACAgIAAxkBAAEQZtFpgEdROhGouBVFD3e0K-YjmVHwsgACtCMAAphLKUjeub7NKlvk2TgE"
     
     # Workers
-    MAX_WORKERS = int(environ.get("MAX_WORKERS", "500"))
+    MAX_WORKERS = "500"
     
     # Bot Settings
-    STICKER_DELETE_TIME = int(environ.get("STICKER_DELETE_TIME", "2"))  # seconds
+    STICKER_DELETE_TIME = "2"
     
     # Admin IDs for broadcast
-    ADMINS = list(set(int(x) for x in environ.get("ADMINS", "1234567890").split()))
-    ADMINS.append(OWNER_ID)
+    ADMINS = 8498741978
