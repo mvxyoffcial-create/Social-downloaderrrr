@@ -1,0 +1,63 @@
+{
+  "name": "Social Media Downloader Bot",
+  "description": "A powerful Telegram bot that downloads videos from social media platforms",
+  "keywords": [
+    "telegram",
+    "bot",
+    "downloader",
+    "youtube",
+    "instagram",
+    "tiktok"
+  ],
+  "repository": "https://github.com/yourusername/telegram-downloader-bot",
+  "website": "https://t.me/zerodev2",
+  "success_url": "https://t.me/zerodev2",
+  "env": {
+    "API_ID": {
+      "description": "Get this value from https://my.telegram.org",
+      "value": ""
+    },
+    "API_HASH": {
+      "description": "Get this value from https://my.telegram.org",
+      "value": ""
+    },
+    "BOT_TOKEN": {
+      "description": "Get this from @BotFather",
+      "value": ""
+    },
+    "DATABASE_URI": {
+      "description": "MongoDB URI. Get free database from https://www.mongodb.com/cloud/atlas",
+      "value": ""
+    },
+    "DATABASE_NAME": {
+      "description": "Name of the database",
+      "value": "telegram_bot"
+    },
+    "OWNER_ID": {
+      "description": "Your Telegram User ID",
+      "value": ""
+    },
+    "OWNER_USERNAME": {
+      "description": "Your Telegram Username with @",
+      "value": "@Venuboyy"
+    },
+    "ADMINS": {
+      "description": "Admin user IDs separated by space",
+      "value": ""
+    }
+  },
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    },
+    {
+      "url": "https://github.com/jonathanong/heroku-buildpack-ffmpeg-latest.git"
+    }
+  ]
+}
