@@ -22,7 +22,7 @@ class Config:
     OWNER_USERNAME = "@Venuboyy"
     
     # Welcome Images
-    WELCOME_IMAGE = "https://i.ibb.co/pr2H8cwT/img-8312532076.jpg"
+    WELCOME_IMAGE = "https://i.ibb.co/KpDjCfFx/img-8108646188.jpg"
     RANDOM_IMAGE_API = "https://api.aniwallpaper.workers.dev/random?type=girl"
     
     # Welcome Sticker
