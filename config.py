@@ -36,3 +36,6 @@ class Config:
     
     # Admin IDs for broadcast
     ADMINS = 8498741978
+
+
+   WORKERS = "10"
