@@ -3,7 +3,7 @@ from os import environ
 
 class Config:
     # Bot Configuration
-    API_ID = "20288994"
+    API_ID = 20288994  # Remove quotes - should be integer
     API_HASH = "d702614912f1ad370a0d18786002adbf"
     BOT_TOKEN = "7958640544:AAGQSUlrLk8WL7aqfBSusVsMvP-E7LwlZ5w"
     
@@ -18,7 +18,7 @@ class Config:
     ]
     
     # Owner/Developer
-    OWNER_ID = "8498741978"
+    OWNER_ID = 8498741978  # Remove quotes - should be integer
     OWNER_USERNAME = "@Venuboyy"
     
     # Welcome Images
@@ -28,14 +28,12 @@ class Config:
     # Welcome Sticker
     WELCOME_STICKER = "CAACAgIAAxkBAAEQZtFpgEdROhGouBVFD3e0K-YjmVHwsgACtCMAAphLKUjeub7NKlvk2TgE"
     
-    # Workers
-    MAX_WORKERS = "500"
+    # Workers - THIS IS THE IMPORTANT FIX
+    MAX_WORKERS = 500  # Remove quotes - should be integer
+    WORKERS = 10  # Remove quotes - should be integer
     
     # Bot Settings
-    STICKER_DELETE_TIME = "2"
+    STICKER_DELETE_TIME = 2  # Remove quotes - should be integer
     
-    # Admin IDs for broadcast
-    ADMINS = 8498741978
-
-
-    WORKERS = "10"
+    # Admin IDs for broadcast - Convert to list of integers
+    ADMINS = [8498741978]  # This should be a list
