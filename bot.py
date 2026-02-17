@@ -1,13 +1,13 @@
 import asyncio
 import os
 import time
-import yt_dlp
 from pyrogram import Client, filters
 from pyrogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import FloodWait
 from config import Config
 from database import db
 from script import script
+from downloader import Downloader
 from helpers import (
     is_subscribed, 
     get_force_sub_buttons, 
@@ -21,13 +21,18 @@ from helpers import (
 )
 
 # Initialize bot
+# Ensure workers is a valid integer (Pyrogram requirement)
+WORKERS = max(1, min(int(Config.MAX_WORKERS), 500))  # Between 1 and 500
+
 app = Client(
     "social_downloader_bot",
     api_id=Config.API_ID,
     api_hash=Config.API_HASH,
     bot_token=Config.BOT_TOKEN,
-    workers=Config.MAX_WORKERS
+    workers=WORKERS
 )
+
+print(f"Bot initialized with {WORKERS} workers")
 
 # Start command
 @app.on_message(filters.command("start") & filters.private)
@@ -244,14 +249,6 @@ async def download_handler(client: Client, message: Message):
     status_msg = await message.reply_text(script.DOWNLOAD_START)
     
     try:
-        # Download options
-        ydl_opts = {
-            'format': 'best',
-            'outtmpl': 'downloads/%(title)s.%(ext)s',
-            'quiet': True,
-            'no_warnings': True,
-        }
-        
         # For YouTube, show quality selection
         if 'youtube.com' in url or 'youtu.be' in url:
             buttons = [
@@ -271,20 +268,30 @@ async def download_handler(client: Client, message: Message):
             )
             return
         
-        # Download the file
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=True)
-            filename = ydl.prepare_filename(info)
+        # Download the file using new Downloader class
+        filename, title = Downloader.download(url)
         
         await status_msg.edit_text(script.UPLOAD_START)
         
         # Upload the file
         if os.path.exists(filename):
-            await client.send_document(
-                chat_id=message.chat.id,
-                document=filename,
-                caption=f"📥 Downloaded by {client.me.mention}"
-            )
+            # Check file size
+            file_size = os.path.getsize(filename)
+            
+            # Send as video or document based on extension
+            if filename.lower().endswith(('.mp4', '.mkv', '.avi', '.mov')):
+                await client.send_video(
+                    chat_id=message.chat.id,
+                    video=filename,
+                    caption=f"📥 {title}\nDownloaded by {client.me.mention}",
+                    supports_streaming=True
+                )
+            else:
+                await client.send_document(
+                    chat_id=message.chat.id,
+                    document=filename,
+                    caption=f"📥 {title}\nDownloaded by {client.me.mention}"
+                )
             
             # Clean up
             os.remove(filename)
@@ -293,7 +300,8 @@ async def download_handler(client: Client, message: Message):
             await status_msg.edit_text("❌ Download failed!")
     
     except Exception as e:
-        await status_msg.edit_text(f"❌ Error: {str(e)}")
+        error_msg = str(e)
+        await status_msg.edit_text(error_msg if error_msg.startswith("❌") else f"❌ Error: {error_msg}")
 
 # Quality selection callback
 @app.on_callback_query(filters.regex(r"quality_"))
@@ -306,37 +314,9 @@ async def quality_callback(client: Client, callback_query: CallbackQuery):
     await callback_query.message.edit_text(script.DOWNLOAD_START)
     
     try:
-        # Set download options based on quality
-        if quality == "mp3":
-            ydl_opts = {
-                'format': 'bestaudio/best',
-                'outtmpl': 'downloads/%(title)s.%(ext)s',
-                'postprocessors': [{
-                    'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'mp3',
-                    'preferredquality': '192',
-                }],
-                'quiet': True,
-                'no_warnings': True,
-            }
-        else:
-            height = quality
-            ydl_opts = {
-                'format': f'bestvideo[height<={height}]+bestaudio/best[height<={height}]',
-                'outtmpl': 'downloads/%(title)s.%(ext)s',
-                'merge_output_format': 'mp4',
-                'quiet': True,
-                'no_warnings': True,
-            }
-        
-        # Download the file
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=True)
-            filename = ydl.prepare_filename(info)
-            
-            # For MP3, update filename
-            if quality == "mp3":
-                filename = filename.rsplit('.', 1)[0] + '.mp3'
+        # Download using the new Downloader class
+        audio_only = (quality == "mp3")
+        filename, title = Downloader.download(url, quality=quality, audio_only=audio_only)
         
         await callback_query.message.edit_text(script.UPLOAD_START)
         
@@ -346,13 +326,14 @@ async def quality_callback(client: Client, callback_query: CallbackQuery):
                 await client.send_audio(
                     chat_id=callback_query.message.chat.id,
                     audio=filename,
-                    caption=f"🎵 Downloaded by {client.me.mention}"
+                    caption=f"🎵 {title}\nDownloaded by {client.me.mention}"
                 )
             else:
                 await client.send_video(
                     chat_id=callback_query.message.chat.id,
                     video=filename,
-                    caption=f"📹 Quality: {quality}\nDownloaded by {client.me.mention}"
+                    caption=f"📹 Quality: {quality}\n📥 {title}\nDownloaded by {client.me.mention}",
+                    supports_streaming=True
                 )
             
             # Clean up
@@ -362,7 +343,8 @@ async def quality_callback(client: Client, callback_query: CallbackQuery):
             await callback_query.message.edit_text("❌ Download failed!")
     
     except Exception as e:
-        await callback_query.message.edit_text(f"❌ Error: {str(e)}")
+        error_msg = str(e)
+        await callback_query.message.edit_text(error_msg if error_msg.startswith("❌") else f"❌ Error: {error_msg}")
 
 # Create downloads directory
 os.makedirs("downloads", exist_ok=True)
