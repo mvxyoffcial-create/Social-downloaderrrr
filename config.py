@@ -35,5 +35,12 @@ class Config:
     # Bot Settings
     STICKER_DELETE_TIME = 2  # Remove quotes - should be integer
     
+     # Instagram Credentials (Optional - for better downloads)
+    INSTAGRAM_USERNAME = environ.get("INSTAGRAM_USERNAME", "")
+    INSTAGRAM_PASSWORD = environ.get("INSTAGRAM_PASSWORD", "")
+    
+   # Cookies file path (for Instagram, TikTok, etc.)
+    COOKIES_FILE = "cookies.txt"
+    
     # Admin IDs for broadcast - Convert to list of integers
     ADMINS = [8498741978]  # This should be a list
